@@ -42,7 +42,9 @@ I also enjoy playing blackjack from time to time and believe that this project i
 ## User Stories
 
 - As a user, I want to be able to add a card to my hand.
+- As a user, I want to be able to be notified if I have busted
+- As a user, I want to be able to stand.
 - As a user, I want to be able to input my bet size.
+- As a user, I want an element of randomness, I don't want the same hand over and over.
 - As a user, I want to be able to see the cards in my hand and what they add up to.
 - As a user, I want to be able to see the dealers hand once I have stood or busted.
-- As a user, I want an element of randomness, I don't want the same hand over and over.
