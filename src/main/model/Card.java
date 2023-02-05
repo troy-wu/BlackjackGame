@@ -7,8 +7,8 @@ public class Card {
 
     private String val;
     private String suit;
-    public static final ArrayList<> faces = new ArrayList<String>(Arrays.asList("J", "Q", "K"));
-    public static final ArrayList<> values = new ArrayList<String>(Arrays.asList(
+    public static final ArrayList<String> faces = new ArrayList<String>(Arrays.asList("J", "Q", "K"));
+    public static final ArrayList<String> values = new ArrayList<String>(Arrays.asList(
             "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"));
     public static final ArrayList<String> suits = new ArrayList<String>(Arrays.asList("C", "S", "D", "H"));
 
