@@ -36,4 +36,15 @@ public class DealerHandTest {
         assertEquals(11, h2.countDealer());
     }
 
+    @Test
+    public void toStringTest() {
+        String x = "XX KD : 10";
+        assertEquals(x, h1.toString());
+        x = "9C KD : 19";
+        assertEquals(x, h1.showHand());
+        String y = "XX AH : 11";
+        assertEquals(y, h2.toString());
+        String z = "XX 9C : 9";
+        assertEquals(z, h3.toString());
+    }
 }

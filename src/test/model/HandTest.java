@@ -77,4 +77,14 @@ public class HandTest {
         assertEquals(20, h2.countHand());
     }
 
+    @Test
+    public void toStringTest() {
+        String x = "9C KD : 19";
+        assertEquals(x, h1.toString());
+        String y = "KD AH : 21";
+        assertEquals(y, h2.toString());
+        String z = "AH 9C : 20";
+        assertEquals(z, h3.toString());
+    }
+
 }
