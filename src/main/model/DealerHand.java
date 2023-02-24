@@ -1,7 +1,10 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
+// This class represents the dealer's hand. It extends the Hand class and the key feature is that one of the cards is
+// face down and hidden from the user.
 public class DealerHand extends Hand {
 
 
@@ -9,6 +12,11 @@ public class DealerHand extends Hand {
         super(hand);
 
     }
+
+    public String showHand() {
+        return super.toString();
+    }
+
 
     public int countDealer() {
         return countHand() - super.getHand().get(0).getValue();
@@ -24,6 +32,6 @@ public class DealerHand extends Hand {
                 res += super.getHand().get(i) + " ";
             }
         }
-        return res += ": " + countDealer();
+        return res + ": " + countDealer();
     }
 }

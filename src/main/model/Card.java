@@ -3,6 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// This class represents a playing card, it holds a value and a suit. The value can be from 2 to 10, Jack, Queen,
+// King or Ace. The suits can be Club, Spade, Diamond or Heart. These cards are the basis of the blackjack game.
 public class Card {
 
     private String val;
