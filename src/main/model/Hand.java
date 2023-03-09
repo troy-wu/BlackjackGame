@@ -1,12 +1,15 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 // This class represents a blackjack hand. It consists of Cards from the card class. It has a fields hand, an arraylist
 // representing the hand and aceCount, an integer representing the amount of aces in the hand.
 public class Hand {
-    private ArrayList<Card> hand;
-    private int aceCount;
+    protected ArrayList<Card> hand;
+    protected int aceCount;
 
     // REQUIRES: hand is not an empty list
     // MODIFIES: this
@@ -24,12 +27,17 @@ public class Hand {
     // MODIFIES: this
     // EFFECTS: makes hand an empty list
     public void clearHand() {
-        hand = new ArrayList<Card>();
+        hand = new ArrayList<>();
         aceCount = 0;
     }
 
     public ArrayList<Card> getHand() {
         return hand;
+    }
+
+    // EFFECTS: returns length of hand
+    public int length() {
+        return hand.size();
     }
 
 
@@ -59,6 +67,15 @@ public class Hand {
         if ((c.getVal()).equals("A")) {
             aceCount++;
         }
+    }
+
+    // EFFECTS: Constructs a hand in JSON format
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        JSONArray cards = new JSONArray(hand);
+        json.put("hand", cards);
+        json.put("aceCount", aceCount);
+        return json;
     }
 
     // EFFECTS: returns a version of a blackjack hand that is more readable to users.

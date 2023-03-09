@@ -1,5 +1,7 @@
 package ui;
 
+import org.json.JSONObject;
+
 // This class represents a blackjack round. It contains data on the users bet
 public class Round {
     private double betSize;
@@ -27,4 +29,5 @@ public class Round {
     public double getWinBJ() {
         return betSize * 1.5;
     }
+
 }

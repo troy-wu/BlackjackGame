@@ -1,0 +1,35 @@
+{
+    "balance": 250,
+    "round": 100,
+    "playerHand": {
+        "aceCount": 1,
+        "hand": [
+            {
+                "val": "A",
+                "suit": "C",
+                "value": 11
+            },
+            {
+                "val": "6",
+                "suit": "H",
+                "value": 6
+            }
+        ]
+    },
+    "deck": [],
+    "dealerHand": {
+        "aceCount": 0,
+        "hand": [
+            {
+                "val": "4",
+                "suit": "S",
+                "value": 4
+            },
+            {
+                "val": "J",
+                "suit": "D",
+                "value": 10
+            }
+        ]
+    }
+}

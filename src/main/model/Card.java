@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -7,12 +9,12 @@ import java.util.Arrays;
 // King or Ace. The suits can be Club, Spade, Diamond or Heart. These cards are the basis of the blackjack game.
 public class Card {
 
-    private String val;
-    private String suit;
-    public static final ArrayList<String> faces = new ArrayList<String>(Arrays.asList("J", "Q", "K"));
-    public static final ArrayList<String> values = new ArrayList<String>(Arrays.asList(
+    private final String val;
+    private final String suit;
+    public static final ArrayList<String> faces = new ArrayList<>(Arrays.asList("J", "Q", "K"));
+    public static final ArrayList<String> values = new ArrayList<>(Arrays.asList(
             "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"));
-    public static final ArrayList<String> suits = new ArrayList<String>(Arrays.asList("C", "S", "D", "H"));
+    public static final ArrayList<String> suits = new ArrayList<>(Arrays.asList("C", "S", "D", "H"));
 
     // REQUIRES: val must be 0 - 10, or "J", "Q", "K" or "A"
     //           suit must be either "C", "S", "H", "D"
@@ -37,6 +39,8 @@ public class Card {
             return Integer.parseInt(val);
         }
     }
+
+
 
     // EFFECTS: returns the suit
     public String getSuit() {

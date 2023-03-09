@@ -48,3 +48,8 @@ I also enjoy playing blackjack from time to time and believe that this project i
 - As a user, I want an element of randomness, I don't want the same hand over and over.
 - As a user, I want to be able to see the cards in my hand and what they add up to.
 - As a user, I want to be able to see the dealers hand once I have stood or busted.
+
+#### Phase 2
+
+- As a user, I would like to be able to have the option to save my balance and my name
+- As a user, I would like to be able to load my balance and name from a file 

@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -87,4 +89,15 @@ public class HandTest {
         assertEquals(z, h3.toString());
     }
 
+    @Test
+    public void toJsonTest() {
+        JSONObject test = new JSONObject();
+        ArrayList<Card> h = new ArrayList<>();
+        h.add(new Card("9", "C"));
+        h.add(new Card("K", "D"));
+        JSONArray testArr = new JSONArray(h);
+        test.put("hand", testArr);
+        test.put("aceCount", 0);
+        assertEquals(test, h1.toJson());
+    }
 }

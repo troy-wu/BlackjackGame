@@ -4,25 +4,32 @@ import exceptions.InputException;
 import model.Card;
 import model.DealerHand;
 import model.Hand;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
+// this class represents the UI and logic for blackjack game
 public class Game {
     private Hand playerHand;
     private DealerHand dealerHand;
     private ArrayList<Card> deck;
     private Round round;
     private double balance;
+    private final JsonReader jsonReader;
+    private final JsonWriter jsonWriter;
+    private static final String JSON_STORE = "./data/game.json";
 
     // EFFECTS: initializes player hand and dealer hand and creates deck
     public Game() {
-        playerHand = new Hand(new ArrayList<Card>());
-        dealerHand = new DealerHand(new ArrayList<Card>());
-        deck = makeDeck();
-        balance = 500;
-        startingMessage();
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
     }
 
 
@@ -30,12 +37,22 @@ public class Game {
     // EFFECTS: main function that runs blackjack game and logic.
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public void main() {
+        startingMessage();
         String keepPlaying = "";
-        while (!keepPlaying.equals("X")) {
+        if (round == null || playerHand.getHand().size() == 0) {
             round = new Round(askBet());
             setup();
+        } else {
+            System.out.println(playerHand);
+            System.out.println(dealerHand);
+        }
+        while (!keepPlaying.equals("X")) {
             while (true) {
                 String decision = askDecision();
+                if (decision.equals("SAVE")) {
+                    saveGame();
+                    return;
+                }
                 processDecision(decision);
                 if (playerHand.countHand() > 21) {
                     playerBust();
@@ -59,6 +76,8 @@ public class Game {
                 }
             }
             keepPlaying = roundEnd();
+            round = new Round(askBet());
+            setup();
         }
     }
 
@@ -101,11 +120,29 @@ public class Game {
     // MODIFIES: this
     // EFFECTS: clears hands and returns the user input whether or not the user wants to keep playing.
     public String roundEnd() {
+        Scanner user = new Scanner(System.in);
         clearHands();
         System.out.println();
-        System.out.println("Press Enter to Keep Playing! (Enter 'X' to stop)");
-        Scanner user = new Scanner(System.in);
+        System.out.println("What would you like to do?");
+        System.out.println("S -> Save game");
+        System.out.println("X -> Quit without saving");
+        System.out.println("Enter -> Next Round");
+        String d = user.nextLine();
+        if (d.equals("S")) {
+            saveGame();
+        }
         return user.nextLine();
+    }
+
+    private void saveGame() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(this);
+            jsonWriter.close();
+            System.out.println("Saved game to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
     }
 
     // EFFECTS: prints a starting message on launch
@@ -114,8 +151,43 @@ public class Game {
         System.out.println("Welcome to Blackjack!");
         System.out.println("Press Enter to Start!");
         user.nextLine();
-        System.out.println("Your Starting Balance is: " + balance);
+        selectionMenu();
+        System.out.println("Your Balance is: " + balance);
     }
+
+    // MODIFIES: this
+    // EFFECTS: Prompts user to select if they would like to load file.
+    //          if not, load a fresh game
+    private void selectionMenu() {
+        Scanner user = new Scanner(System.in);
+        System.out.print("Would you like to load previous game? (y/n): ");
+        String u = user.nextLine();
+        if (u.equals("y")) {
+            loadGame();
+        } else {
+            playerHand = new Hand(new ArrayList<>());
+            dealerHand = new DealerHand(new ArrayList<>());
+            deck = makeDeck();
+            balance = 1000;
+        }
+
+
+    }
+
+    private void loadGame() {
+        try {
+            Game g = jsonReader.read();
+            this.playerHand = g.playerHand;
+            this.dealerHand = g.dealerHand;
+            this.deck = g.deck;
+            this.round = g.round;
+            this.balance = g.balance;
+            System.out.println("Loaded previous game from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        }
+    }
+
 
     // EFFECTS: prints balance
     public void printBal() {
@@ -129,11 +201,11 @@ public class Game {
         return deck.remove(0);
     }
 
-    public String getPlayerHand() {
+    public String getPHand() {
         return "Player: " + playerHand;
     }
 
-    public String getDealerHand() {
+    public String getDHand() {
         return "Dealer: " + dealerHand;
     }
 
@@ -144,8 +216,8 @@ public class Game {
             playerHand.addCard(dealCard());
             dealerHand.addCard(dealCard());
         }
-        System.out.println(getPlayerHand());
-        System.out.println(getDealerHand());
+        System.out.println(getPHand());
+        System.out.println(getDHand());
 
     }
 
@@ -168,9 +240,9 @@ public class Game {
         Scanner user = new Scanner(System.in);
         while (true) {
             try {
-                System.out.print("What would you like to do? HIT(H) or STAND(S): ");
+                System.out.print("What would you like to do? HIT(H) or STAND(S) or (SAVE): ");
                 String input = user.nextLine();
-                boolean invalid = !(input.equals("H") || input.equals("S"));
+                boolean invalid = !(input.equals("H") || input.equals("S") || input.equals("SAVE"));
                 if (invalid) {
                     throw new InputException();
                 }
@@ -198,7 +270,7 @@ public class Game {
     // EFFECTS: dealer draws until hand is equal to or over 17 and returns hand value.
     public int dealerPlay() {
         System.out.println("Dealer Shows: " + dealerHand.showHand());
-        while (dealerHand.countHand() <= 17) {
+        while (dealerHand.countHand() < 17) {
             dealerHand.addCard(dealCard());
             System.out.println("Dealer Draws: " + dealerHand.showHand());
         }
@@ -224,5 +296,53 @@ public class Game {
         return res;
     }
 
+    public JSONObject toJson() {
+        JSONObject main = new JSONObject();
+        main.put("playerHand", playerHand.toJson());
+        main.put("dealerHand", dealerHand.toJson());
+        main.put("deck", new JSONArray(deck));
+        main.put("balance", balance);
+        main.put("round", round.getBetSize());
+        return main;
+    }
 
+    public Hand getPlayerHand() {
+        return playerHand;
+    }
+
+    public DealerHand getDealerHand() {
+        return dealerHand;
+    }
+
+    public void setPlayerHand(Hand playerHand) {
+        this.playerHand = playerHand;
+    }
+
+    public void setDealerHand(DealerHand dealerHand) {
+        this.dealerHand = dealerHand;
+    }
+
+    public void setDeck(ArrayList<Card> deck) {
+        this.deck = deck;
+    }
+
+    public void setRound(Round round) {
+        this.round = round;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public Round getRound() {
+        return round;
+    }
+
+    public ArrayList<Card> getDeck() {
+        return deck;
+    }
 }
