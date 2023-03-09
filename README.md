@@ -53,3 +53,7 @@ I also enjoy playing blackjack from time to time and believe that this project i
 
 - As a user, I would like to be able to have the option to save my balance and my name
 - As a user, I would like to be able to load my balance and name from a file 
+
+#### Citations
+
+persistence package, including JSONWriter and JSONReader is based on code from https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo.git
