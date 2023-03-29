@@ -11,6 +11,8 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +44,10 @@ public class Game extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
-
+        balance = 1000;
+        deck = makeDeck();
+        playerHand = new Hand(new ArrayList<>());
+        dealerHand = new DealerHand(new ArrayList<>());
         revalidate();
         setVisible(true);
 
@@ -62,9 +67,22 @@ public class Game extends JFrame {
             System.out.println(playerHand);
             System.out.println(dealerHand);
         }
+        panel.addText("Good Luck!");
+        panel.updateBalance(balance);
         while (!keepPlaying.equals("X")) {
             while (true) {
-                String decision = askDecision();
+                while (true) {
+                    if (panel.isPressed()) {
+                        panel.setPressed(false);
+                        break;
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception e) {
+                        break;
+                    }
+                }
+                String decision = panel.getDecision();
                 if (decision.equals("SAVE")) {
                     saveGame();
                     return;
@@ -74,6 +92,8 @@ public class Game extends JFrame {
                     playerBust();
                     break;
                 } else if (decision.equals("S")) {
+                    panel.revealDealer(dealerHand.getHand());
+                    panel.addDealerLabel(dealerHand.countHand());
                     int dealerVal = dealerPlay();
                     if (dealerVal > 21) {
                         dealerBust();
@@ -85,8 +105,8 @@ public class Game extends JFrame {
                         playerWin();
                         break;
                     } else {
-                        System.out.println("Push! Your bet was returned");
-                        printBal();
+                        panel.addText("Push! Your bet was returned");
+                        panel.updateBalance(balance);
                         break;
                     }
                 }
@@ -103,24 +123,28 @@ public class Game extends JFrame {
         System.out.println("Dealer Bust!");
         double win = round.getWinReg();
         System.out.println("You win: " + win);
+        panel.addText("You Won! Dealer Bust! You win: " + win);
         balance += win;
         printBal();
+        panel.updateBalance(balance);
     }
 
     // MODIFIES: this
     // EFFECTS: prints dialogue when player busts and deducts bet from balance.
     public void playerBust() {
+        panel.addText("You Lost! BUSTED!");
         System.out.println("Busted!");
         balance -= round.getBetSize();
-        printBal();
+        panel.updateBalance(balance);
     }
 
     // MODIFIES: this
     // EFFECTS: prints dialogue when dealer wins and deducts bet from balance.
     public void dealerWin() {
+        panel.addText("You Lost! Dealer had a higher hand.");
         System.out.println("You Lost! Dealer had a higher hand.");
         balance -= round.getBetSize();
-        printBal();
+        panel.updateBalance(balance);
     }
 
     // MODIFIES: this
@@ -129,25 +153,30 @@ public class Game extends JFrame {
         System.out.println("You Won! You had a higher hand.");
         double win = round.getWinReg();
         System.out.println("You win: " + win);
+        panel.addText("You Won! You had a higher hand. You win: " + win);
         balance += win;
-        printBal();
+        panel.updateBalance(balance);
     }
 
     // MODIFIES: this
     // EFFECTS: clears hands and returns the user input whether or not the user wants to keep playing.
     public String roundEnd() {
-        Scanner user = new Scanner(System.in);
-        clearHands();
-        System.out.println();
-        System.out.println("What would you like to do?");
-        System.out.println("S -> Save game");
-        System.out.println("X -> Quit without saving");
-        System.out.println("Enter -> Next Round");
-        String d = user.nextLine();
-        if (d.equals("S")) {
-            saveGame();
+        panel.setBetSize(0);
+        while (true) {
+            if (panel.getBetSize() != 0) {
+                clearHands();
+                return "";
+            } else if (panel.isSavePressed()) {
+                panel.setSavePressed(false);
+                return "S";
+            }
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                break;
+            }
         }
-        return user.nextLine();
+        return "X";
     }
 
     private void saveGame() {
@@ -232,9 +261,17 @@ public class Game extends JFrame {
             Card c1 = dealCard();
             panel.addPlayerCard(c1);
             playerHand.addCard(c1);
+            panel.addPlayerLabel(playerHand.countHand());
             Card c2 = dealCard();
-            panel.addDealerCard(c2);
             dealerHand.addCard(c2);
+            if (i == 0) {
+                panel.addDealerCard(new Card("blank", "C"));
+            } else {
+                panel.addDealerCard(c2);
+            }
+            panel.addDealerLabel(dealerHand.countDealer());
+
+
         }
         System.out.println(getPHand());
         System.out.println(getDHand());
@@ -243,16 +280,25 @@ public class Game extends JFrame {
 
     // EFFECTS: asks user to input bet size.
     public double askBet() {
-        System.out.print("Please input bet size: ");
-        Scanner user = new Scanner(System.in);
-        double bet = user.nextDouble();
-
-        while (bet > balance) {
-            System.out.println("Not enough cash bud.");
-            System.out.print("Please input bet size: ");
-            bet = user.nextDouble();
+        while (true) {
+            if (panel.getBetSize() != 0) {
+                panel.setPressed(false);
+                if (panel.getBetSize() > balance) {
+                    panel.displayString("You're too broke for that bucko.");
+                } else {
+                    break;
+                }
+            }
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                break;
+            }
         }
+        double bet =  panel.getBetSize();
+        panel.setBetSize(0);
         return bet;
+
     }
 
     // EFFECTS: Asks player the decision to hit or stand, throws exception if invalid input. returns decision.
@@ -273,13 +319,16 @@ public class Game extends JFrame {
         }
     }
 
+
     // MODIFIES: this, playerHand
     // EFFECTS: Processes players decision, if they hit it adds a card to their hand.
     public void processDecision(String d) {
         if (d.equals("H")) {
             Card c = dealCard();
+            panel.addPlayerCard(c);
             System.out.println("Hit. You got " + c);
             playerHand.addCard(c);
+            panel.addPlayerLabel(playerHand.countHand());
             System.out.println("Player: " + playerHand);
         } else if (d.equals("S")) {
             System.out.println("Stand.");
@@ -291,7 +340,10 @@ public class Game extends JFrame {
     public int dealerPlay() {
         System.out.println("Dealer Shows: " + dealerHand.showHand());
         while (dealerHand.countHand() < 17) {
-            dealerHand.addCard(dealCard());
+            Card c = dealCard();
+            panel.addDealerCard(c);
+            dealerHand.addCard(c);
+            panel.addDealerLabel(dealerHand.countHand());
             System.out.println("Dealer Draws: " + dealerHand.showHand());
         }
         return dealerHand.countHand();
@@ -300,8 +352,10 @@ public class Game extends JFrame {
     // MODIFIES: this
     // EFFECTS: starts a new game by clear
     public void clearHands() {
+        panel.clearHands();
         playerHand.clearHand();
         dealerHand.clearHand();
+        panel.revalidate();
     }
 
     // EFFECTS: creates a 52 card deck with distinct values

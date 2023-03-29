@@ -10,17 +10,23 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class PlayArea extends JPanel {
-    private JPanel dealerPanel;
-    private JPanel playerPanel;
+    private JLabel playerLabel;
+    private JLabel dealerLabel;
     private JPanel betPanel;
+    private JPanel balancePanel;
     private JPanel optionsPanel;
     private JPanel dealerBottomPanel;
     private JPanel playerBottomPanel;
-    private int betSize;
-    private JButton playButton;
+    private JPanel playerPanel;
+    private JPanel dealerPanel;
+    private double betSize;
     private JPanel startScreenPanel;
+    private String decision;
+    private boolean isPressed = false;
+    private boolean savePressed = false;
 
     public PlayArea() {
         // Set the layout manager to BorderLayout
@@ -29,12 +35,14 @@ public class PlayArea extends JPanel {
 
         // Create the start screen panel
         startScreenPanel = new JPanel(new BorderLayout());
-        startScreenPanel.setBackground(Color.WHITE);
+        startScreenPanel.setBackground(new Color(38, 209, 49));
         JLabel titleLabel = new JLabel("BLACKJACK - BY TROY", JLabel.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
-        startScreenPanel.add(titleLabel, BorderLayout.NORTH);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 50));
+        startScreenPanel.add(titleLabel, BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel();
-        JButton playButton = new JButton("Play");
+        JButton playButton = new JButton("Play!");
+        playButton.setFont(new Font("SansSerif", Font.BOLD, 30));
+        playButton.setPreferredSize(new Dimension(250,75));
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -42,7 +50,7 @@ public class PlayArea extends JPanel {
             }
         });
         buttonPanel.add(playButton);
-        startScreenPanel.add(buttonPanel, BorderLayout.CENTER);
+        startScreenPanel.add(buttonPanel, BorderLayout.SOUTH);
         add(startScreenPanel, BorderLayout.CENTER);
 
         // Set the background color of the sub-panels for visibility
@@ -54,14 +62,8 @@ public class PlayArea extends JPanel {
     private void startGame() {
         // Remove the start screen panel
         remove(startScreenPanel);
-
-        addPlayerCardsPanel();
-
         // Add the dealer cards panel
-        addDealerCardsPanel();
-
-        // Add the player cards panel
-
+        addCardPanels();
 
         // Add the bet chips panel
         addBetChipsPanel();
@@ -73,63 +75,105 @@ public class PlayArea extends JPanel {
         revalidate();
     }
 
-    private void addDealerCardsPanel() {
-        JPanel topPanel = new JPanel(new BorderLayout());
+    private void addCardPanels() {
+        dealerPanel = new JPanel(new BorderLayout());
         JLabel dealerLabel = new JLabel("Dealer", JLabel.CENTER);
         dealerLabel.setPreferredSize(new Dimension(30, 50));
-        topPanel.add(dealerLabel, BorderLayout.CENTER);
+        dealerPanel.add(dealerLabel, BorderLayout.CENTER);
 
         dealerBottomPanel = new JPanel();
         dealerBottomPanel.setLayout(new BoxLayout(dealerBottomPanel, BoxLayout.X_AXIS));
         dealerBottomPanel.setBackground(new Color(39, 78, 19));
 
         // Add the two nested panels to the main panel with BorderLayout
-        JPanel dealerPanel = new JPanel(new BorderLayout());
-        dealerPanel.add(topPanel, BorderLayout.NORTH);
-        dealerPanel.add(dealerBottomPanel, BorderLayout.CENTER);
-        JSplitPane res = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, addPlayerCardsPanel(), dealerPanel);
+        JPanel resultPanel = new JPanel(new BorderLayout());
+        resultPanel.add(dealerPanel, BorderLayout.NORTH);
+        resultPanel.add(dealerBottomPanel, BorderLayout.CENTER);
+        JPanel playerPanel = addPlayerCardsPanel();
+        JSplitPane res = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, playerPanel, resultPanel);
         res.setDividerLocation(0.5);
         add(res, BorderLayout.CENTER);
         revalidate();
+
     }
 
     public void addDealerCard(Card c) {
-        JLabel label = new JLabel(new ImageIcon(PlayArea.getImage(c)));
+        JLabel label;
+        if (c.getVal().equals("blank")) {
+            label = new JLabel(new ImageIcon(resize("src/images/back_light.png")));
+        } else {
+            label = new JLabel(new ImageIcon(PlayArea.getImage(c)));
+        }
         dealerBottomPanel.add(label);
         revalidate();
     }
 
+
+
     private JPanel addPlayerCardsPanel() {
-        JPanel topPanel = new JPanel(new BorderLayout());
-        JLabel playerLabel = new JLabel("Player", JLabel.CENTER);
+        playerPanel = new JPanel(new BorderLayout());
+        playerLabel = new JLabel("Player", JLabel.CENTER);
         playerLabel.setPreferredSize(new Dimension(30, 50));
-        topPanel.add(playerLabel, BorderLayout.CENTER);
+        playerPanel.add(playerLabel, BorderLayout.CENTER);
 
         playerBottomPanel = new JPanel();
         playerBottomPanel.setLayout(new BoxLayout(playerBottomPanel, BoxLayout.X_AXIS));
         playerBottomPanel.setBackground(new Color(39, 78, 19));
 
         // Add the two nested panels to the main panel with BorderLayout
-        JPanel playerPanel = new JPanel(new BorderLayout());
-        playerPanel.setMinimumSize(new Dimension(600, 100));
-        playerPanel.add(topPanel, BorderLayout.NORTH);
-        playerPanel.add(playerBottomPanel, BorderLayout.CENTER);
-        return playerPanel;
+        JPanel resultPanel = new JPanel(new BorderLayout());
+        resultPanel.setMinimumSize(new Dimension(600, 100));
+        resultPanel.add(playerPanel, BorderLayout.NORTH);
+        resultPanel.add(playerBottomPanel, BorderLayout.CENTER);
+        return resultPanel;
+    }
+
+    public void addPlayerLabel(int number) {
+        playerPanel.removeAll();
+        playerLabel = new JLabel("Player: " + number, JLabel.CENTER);
+        playerLabel.setPreferredSize(new Dimension(30, 50));
+        playerPanel.add(playerLabel, BorderLayout.CENTER);
+        revalidate();
+    }
+
+    public void addDealerLabel(int number) {
+        dealerPanel.removeAll();
+        dealerLabel = new JLabel("Dealer: " + number, JLabel.CENTER);
+        dealerLabel.setPreferredSize(new Dimension(30, 50));
+        dealerPanel.add(dealerLabel, BorderLayout.CENTER);
+        revalidate();
     }
 
     public void addPlayerCard(Card c) {
         JLabel label = new JLabel(new ImageIcon(PlayArea.getImage(c)));
+        label.setMaximumSize(new Dimension(100,150));
         playerBottomPanel.add(label);
         revalidate();
     }
 
+    public BufferedImage resize(String url) {
+        BufferedImage org = null;
+        try {
+            org = ImageIO.read(new File(url));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        BufferedImage res = new BufferedImage(100, 150, org.getType());
+        Graphics2D g = res.createGraphics();
+        g.drawImage(org, 0, 0, 100, 150, null);
+        g.dispose();
+        return res;
+    }
+
+    public JPanel getBetPanel() {
+        return betPanel;
+    }
+
     private void addBetChipsPanel() {
-        JPanel betChipsPanel = new JPanel(new BorderLayout());
-        betChipsPanel.setBackground(Color.GRAY);
-        betPanel = betChipsPanel;
+        betPanel = new JPanel(new BorderLayout());
+        betPanel.setBackground(Color.GRAY);
         JPanel betPanelNorth = new JPanel();
-        betPanelNorth.setLayout(new BoxLayout(betPanelNorth, BoxLayout.LINE_AXIS));
-        betPanelNorth.add(new JLabel("Bet"));
+        betPanelNorth.setLayout(new BoxLayout(betPanelNorth, BoxLayout.Y_AXIS));
         JTextField textField = new JTextField(10);
         betPanelNorth.add(textField);
         addButton(betPanelNorth, "Bet", new ActionListener() {
@@ -138,45 +182,56 @@ public class PlayArea extends JPanel {
                 String bet = textField.getText();
                 betSize = Integer.parseInt(bet);
             }
-        });
-        addButton(betPanelNorth, "test", new ActionListener() {
+        }, new Color(94, 140, 189));
+        addButton(betPanelNorth, "Hit", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addLabel(dealerPanel, Integer.toString(betSize));
-                revalidate();
+                isPressed = true;
+                decision = "H";
             }
-        });
-        betPanelNorth.add(new JLabel("Chips"));
-
-        betChipsPanel.add(betPanelNorth, BorderLayout.NORTH);
-
-        add(betChipsPanel, BorderLayout.SOUTH);
+        }, new Color(76, 175, 80));
+        addButton(betPanelNorth, "Stand", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isPressed = true;
+                decision = "S";
+            }
+        }, new Color(158, 8, 8));
+        balancePanel = new JPanel();
+        balancePanel.add(new JLabel("Balance"));
+        betPanel.add(betPanelNorth, BorderLayout.NORTH);
+        betPanel.add(balancePanel, BorderLayout.SOUTH);
+        add(betPanel, BorderLayout.SOUTH);
     }
 
-    private void addLabel(JPanel panel, String text) {
-        JLabel label = new JLabel(text);
-        panel.add(label);
+    public void updateBalance(double b) {
+        balancePanel = new JPanel();
+        balancePanel.add(new JLabel("Balance: " + b));
+        betPanel.add(balancePanel, BorderLayout.SOUTH);
+        revalidate();
     }
 
-    private void addTextField(JPanel panel, int columns) {
-        JTextField textField = new JTextField(columns);
-        panel.add(textField);
-    }
 
-    private void addButton(JPanel panel, String text, ActionListener listener) {
+    private void addButton(JPanel panel, String text, ActionListener listener, Color color) {
         JButton button = new JButton(text);
         button.addActionListener(listener);
+        button.setPreferredSize(new Dimension(100, 50));
+        button.setBackground(color);
         panel.add(button);
     }
 
     private void addGameOptionsPanel() {
-        JPanel gameOptionsPanel = new JPanel();
-        JLabel gameOptionsLabel = new JLabel("Game Options");
-        optionsPanel = gameOptionsPanel;
-        gameOptionsPanel.add(gameOptionsLabel);
-        gameOptionsPanel.setBackground(Color.LIGHT_GRAY);
+        optionsPanel = new JPanel(new BorderLayout());
+        optionsPanel.setBackground(Color.LIGHT_GRAY);
 
-        add(gameOptionsPanel, BorderLayout.NORTH);
+        add(optionsPanel, BorderLayout.NORTH);
+    }
+
+    public void addText(String text) {
+        optionsPanel.removeAll();
+        JLabel label = new JLabel(text, JLabel.CENTER);
+        label.setFont(new Font("SansSerif", Font.BOLD, 30));
+        optionsPanel.add(new JLabel(text, JLabel.CENTER), BorderLayout.CENTER);
     }
 
     public void displayString(String text) {
@@ -202,7 +257,7 @@ public class PlayArea extends JPanel {
         } else if (suit.equals("D")) {
             formatted = "diamonds";
         } else if (suit.equals("H")) {
-            formatted = "Hearts";
+            formatted = "hearts";
         } else if (suit.equals("S")) {
             formatted = "spades";
         }
@@ -217,6 +272,56 @@ public class PlayArea extends JPanel {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public void revealDealer(ArrayList<Card> cards) {
+        dealerBottomPanel.removeAll();
+        for (Card c : cards) {
+            addDealerCard(c);
+        }
+
+    }
+
+    public boolean isPressed() {
+        return isPressed;
+    }
+
+    public void setPressed(boolean pressed) {
+        isPressed = pressed;
+    }
+
+    public String getDecision() {
+        return decision;
+    }
+
+    public double getBetSize() {
+        return betSize;
+    }
+
+    public void setBetSize(double i) {
+        betSize = i;
+    }
+
+    public void clearHands() {
+        playerPanel.removeAll();
+        playerLabel = new JLabel("Player", JLabel.CENTER);
+        playerLabel.setPreferredSize(new Dimension(30, 50));
+        playerPanel.add(playerLabel, BorderLayout.CENTER);
+        dealerPanel.removeAll();
+        dealerLabel = new JLabel("Dealer", JLabel.CENTER);
+        dealerLabel.setPreferredSize(new Dimension(30, 50));
+        dealerPanel.add(dealerLabel, BorderLayout.CENTER);
+        playerBottomPanel.removeAll();
+        dealerBottomPanel.removeAll();
+        revalidate();
+    }
+
+    public boolean isSavePressed() {
+        return savePressed;
+    }
+
+    public void setSavePressed(boolean savePressed) {
+        this.savePressed = savePressed;
     }
 }
 
