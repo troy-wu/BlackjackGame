@@ -27,7 +27,7 @@ public class JsonReader {
 
     // EFFECTS: reads game from file and returns it;
     // throws IOException if an error occurs reading data from file
-    public Game read() throws IOException {
+    public double read() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
         return parseWorkRoom(jsonObject);
@@ -45,14 +45,14 @@ public class JsonReader {
     }
 
     // EFFECTS: parses game from JSON object and returns it
-    private Game parseWorkRoom(JSONObject jsonObject) {
-        Game g = new Game();
-        addHands(g, jsonObject);
-        addDeck(g, jsonObject);
-        addDeck(g, jsonObject);
-        g.setBalance(jsonObject.getDouble("balance"));
-        g.setRound(new Round(jsonObject.getDouble("round")));
-        return g;
+    private double parseWorkRoom(JSONObject jsonObject) {
+        // Game g = new Game();
+        // addHands(g, jsonObject);
+        // addDeck(g, jsonObject);
+        // addDeck(g, jsonObject);
+//        g.setBalance(jsonObject.getDouble("balance"));
+//        g.setRound(new Round(jsonObject.getDouble("round")));
+        return jsonObject.getDouble("balance");
     }
 
     // MODIFIES: g

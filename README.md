@@ -47,12 +47,19 @@ I also enjoy playing blackjack from time to time and believe that this project i
 - As a user, I want to be able to input my bet size.
 - As a user, I want an element of randomness, I don't want the same hand over and over.
 - As a user, I want to be able to see the cards in my hand and what they add up to.
-- As a user, I want to be able to see the dealers hand once I have stood or busted.
+- As a user, I want to be able to see the dealers hand once I have stood.
 
 #### Phase 2
 
-- As a user, I would like to be able to have the option to save my balance and my name
-- As a user, I would like to be able to load my balance and name from a file 
+- As a user, I would like to be able to have the option to save my game, which includes my balance
+- As a user, I would like to be able to load my balance from a file 
+
+#### Phase 3 Instructions For Grader
+1. Run Main
+2. You are presented with the option to Play (Start a new game) or Load Game, which loads your previously saved balance
+3. You must input a number into the space above the "bet" button, then press bet to place a bet and start the round.
+4. You can Hit, which adds the Card to your hand, or Stand.
+5. Once the round is over, you can press the save button which saves the balance stored
 
 #### Citations
 

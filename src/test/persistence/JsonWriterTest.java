@@ -48,12 +48,12 @@ public class JsonWriterTest extends JsonTest {
             writer.close();
 
             JsonReader reader = new JsonReader("./data/testWriterNewGame.json");
-            g = reader.read();
-            assertEquals(250, g.getBalance());
-            checkCard("A", "C", g.getPlayerHand().getHand().get(0));
-            checkCard("6", "H", g.getPlayerHand().getHand().get(1));
-            assertEquals(2, g.getDealerHand().length());
-            assertEquals(100, g.getRound().getBetSize());
+            double b = reader.read();
+            assertEquals(250, b);
+//            checkCard("A", "C", g.getPlayerHand().getHand().get(0));
+//            checkCard("6", "H", g.getPlayerHand().getHand().get(1));
+//            assertEquals(2, g.getDealerHand().length());
+//            assertEquals(100, g.getRound().getBetSize());
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");

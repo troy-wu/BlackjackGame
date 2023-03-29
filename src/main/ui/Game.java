@@ -11,8 +11,6 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,6 +44,10 @@ public class Game extends JFrame {
         jsonReader = new JsonReader(JSON_STORE);
         balance = 1000;
         deck = makeDeck();
+        for (int i = 0; i < 5; i++) {
+            deck.addAll(makeDeck());
+        }
+        deck.addAll(makeDeck());
         playerHand = new Hand(new ArrayList<>());
         dealerHand = new DealerHand(new ArrayList<>());
         revalidate();
@@ -59,28 +61,25 @@ public class Game extends JFrame {
     // EFFECTS: main function that runs blackjack game and logic.
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public void main() {
-        String keepPlaying = "";
-        if (round == null || playerHand.getHand().size() == 0) {
+        waitForLoad();
+        if (panel.isLoadGame()) {
+            panel.setLoadGame(false);
+            loadGame();
             round = new Round(askBet());
             setup();
+            panel.updateBalance(balance);
+
         } else {
-            System.out.println(playerHand);
-            System.out.println(dealerHand);
+            round = new Round(askBet());
+            setup();
         }
+        String keepPlaying = "";
         panel.addText("Good Luck!");
         panel.updateBalance(balance);
         while (!keepPlaying.equals("X")) {
             while (true) {
-                while (true) {
-                    if (panel.isPressed()) {
-                        panel.setPressed(false);
-                        break;
-                    }
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception e) {
-                        break;
-                    }
+                if (waitForInput()) {
+                    break;
                 }
                 String decision = panel.getDecision();
                 if (decision.equals("SAVE")) {
@@ -117,6 +116,31 @@ public class Game extends JFrame {
         }
     }
 
+    private boolean waitForLoad() {
+        while (panel.isLoadGame() == null) {
+            try {
+                Thread.sleep(500);
+            } catch (Exception e) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean waitForInput() {
+        while (true) {
+            if (panel.isPressed()) {
+                panel.setPressed(false);
+                return false;
+            }
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                return true;
+            }
+        }
+    }
+
     // MODIFIES: this
     // EFFECTS: prints dialogue when dealer busts and adds win to balance.
     public void dealerBust() {
@@ -133,7 +157,6 @@ public class Game extends JFrame {
     // EFFECTS: prints dialogue when player busts and deducts bet from balance.
     public void playerBust() {
         panel.addText("You Lost! BUSTED!");
-        System.out.println("Busted!");
         balance -= round.getBetSize();
         panel.updateBalance(balance);
     }
@@ -142,7 +165,6 @@ public class Game extends JFrame {
     // EFFECTS: prints dialogue when dealer wins and deducts bet from balance.
     public void dealerWin() {
         panel.addText("You Lost! Dealer had a higher hand.");
-        System.out.println("You Lost! Dealer had a higher hand.");
         balance -= round.getBetSize();
         panel.updateBalance(balance);
     }
@@ -150,9 +172,7 @@ public class Game extends JFrame {
     // MODIFIES: this
     // EFFECTS: prints dialogue when player wins and adds win from balance.
     public void playerWin() {
-        System.out.println("You Won! You had a higher hand.");
         double win = round.getWinReg();
-        System.out.println("You win: " + win);
         panel.addText("You Won! You had a higher hand. You win: " + win);
         balance += win;
         panel.updateBalance(balance);
@@ -161,22 +181,30 @@ public class Game extends JFrame {
     // MODIFIES: this
     // EFFECTS: clears hands and returns the user input whether or not the user wants to keep playing.
     public String roundEnd() {
+        panel.updateBalance(balance);
         panel.setBetSize(0);
+        panel.setSavePressed(false);
         while (true) {
             if (panel.getBetSize() != 0) {
                 clearHands();
                 return "";
             } else if (panel.isSavePressed()) {
                 panel.setSavePressed(false);
+                clearHands();
+                panel.addText("Saved game to " + JSON_STORE);
+                saveGame();
                 return "S";
             }
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                break;
-            }
+            stall();
         }
-        return "X";
+    }
+
+    private void stall() {
+        try {
+            Thread.sleep(100);
+        } catch (Exception e) {
+            return;
+        }
     }
 
     private void saveGame() {
@@ -184,20 +212,15 @@ public class Game extends JFrame {
             jsonWriter.open();
             jsonWriter.write(this);
             jsonWriter.close();
-            System.out.println("Saved game to " + JSON_STORE);
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                return;
+            }
+            System.exit(0);
         } catch (FileNotFoundException e) {
             System.out.println("Unable to write to file: " + JSON_STORE);
         }
-    }
-
-    // EFFECTS: prints a starting message on launch
-    private void startingMessage() {
-        Scanner user = new Scanner(System.in);
-        System.out.println("Welcome to Blackjack!");
-        System.out.println("Press Enter to Start!");
-        user.nextLine();
-        selectionMenu();
-        System.out.println("Your Balance is: " + balance);
     }
 
     // MODIFIES: this
@@ -213,6 +236,9 @@ public class Game extends JFrame {
             playerHand = new Hand(new ArrayList<>());
             dealerHand = new DealerHand(new ArrayList<>());
             deck = makeDeck();
+            deck.addAll(makeDeck());
+            deck.addAll(makeDeck());
+
             balance = 1000;
         }
 
@@ -221,13 +247,9 @@ public class Game extends JFrame {
 
     private void loadGame() {
         try {
-            Game g = jsonReader.read();
-            this.playerHand = g.playerHand;
-            this.dealerHand = g.dealerHand;
-            this.deck = g.deck;
-            this.round = g.round;
-            this.balance = g.balance;
-            System.out.println("Loaded previous game from " + JSON_STORE);
+            balance = jsonReader.read();
+            panel.addText("Loaded previous game from " + JSON_STORE);
+            panel.updateBalance(balance);
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + JSON_STORE);
         }
@@ -273,8 +295,7 @@ public class Game extends JFrame {
 
 
         }
-        System.out.println(getPHand());
-        System.out.println(getDHand());
+        panel.updateBalance(balance);
 
     }
 
@@ -299,24 +320,6 @@ public class Game extends JFrame {
         panel.setBetSize(0);
         return bet;
 
-    }
-
-    // EFFECTS: Asks player the decision to hit or stand, throws exception if invalid input. returns decision.
-    public String askDecision() {
-        Scanner user = new Scanner(System.in);
-        while (true) {
-            try {
-                System.out.print("What would you like to do? HIT(H) or STAND(S) or (SAVE): ");
-                String input = user.nextLine();
-                boolean invalid = !(input.equals("H") || input.equals("S") || input.equals("SAVE"));
-                if (invalid) {
-                    throw new InputException();
-                }
-                return input;
-            } catch (InputException e) {
-                System.out.println("Invalid Entry, try again.");
-            }
-        }
     }
 
 

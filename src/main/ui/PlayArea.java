@@ -27,6 +27,7 @@ public class PlayArea extends JPanel {
     private String decision;
     private boolean isPressed = false;
     private boolean savePressed = false;
+    private Boolean loadGame = null;
 
     public PlayArea() {
         // Set the layout manager to BorderLayout
@@ -34,29 +35,39 @@ public class PlayArea extends JPanel {
         setPreferredSize(new Dimension(500, 500));
 
         // Create the start screen panel
-        startScreenPanel = new JPanel(new BorderLayout());
-        startScreenPanel.setBackground(new Color(38, 209, 49));
-        JLabel titleLabel = new JLabel("BLACKJACK - BY TROY", JLabel.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 50));
-        startScreenPanel.add(titleLabel, BorderLayout.CENTER);
-        JPanel buttonPanel = new JPanel();
-        JButton playButton = new JButton("Play!");
-        playButton.setFont(new Font("SansSerif", Font.BOLD, 30));
-        playButton.setPreferredSize(new Dimension(250,75));
-        playButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                startGame();
-            }
-        });
-        buttonPanel.add(playButton);
-        startScreenPanel.add(buttonPanel, BorderLayout.SOUTH);
-        add(startScreenPanel, BorderLayout.CENTER);
+        createStartScreen();
 
         // Set the background color of the sub-panels for visibility
         setBackground(Color.LIGHT_GRAY);
         setVisible(true);
         revalidate();
+    }
+
+    private void createStartScreen() {
+        startScreenPanel = new JPanel(new BorderLayout());
+        startScreenPanel.setBackground(new Color(38, 209, 49));
+        JLabel titleLabel = new JLabel("BLACKJACK - BY TROY", JLabel.CENTER);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 50));
+        startScreenPanel.add(titleLabel, BorderLayout.CENTER);
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(createButton("Load Game", true));
+        buttonPanel.add(createButton("Play!", false));
+        startScreenPanel.add(buttonPanel, BorderLayout.SOUTH);
+        add(startScreenPanel, BorderLayout.CENTER);
+    }
+
+    private JButton createButton(String label, boolean b) {
+        JButton button = new JButton(label);
+        button.setFont(new Font("SansSerif", Font.BOLD, 30));
+        button.setPreferredSize(new Dimension(250,75));
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadGame = b;
+                startGame();
+            }
+        });
+        return button;
     }
 
     private void startGame() {
@@ -172,37 +183,48 @@ public class PlayArea extends JPanel {
     private void addBetChipsPanel() {
         betPanel = new JPanel(new BorderLayout());
         betPanel.setBackground(Color.GRAY);
+        betPanel.add(createBetPanelNorth(), BorderLayout.CENTER);
+        betPanel.add(createBalancePanel(), BorderLayout.SOUTH);
+        betPanel.add(createSaveButton(), BorderLayout.EAST);
+        add(betPanel, BorderLayout.SOUTH);
+    }
+
+    private JButton createSaveButton() {
+        JButton save = new JButton("SAVE");
+        save.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                savePressed = true;
+            }
+        });
+        save.setMinimumSize(new Dimension(100,20));
+        save.setMaximumSize(new Dimension(200,30));
+        return save;
+    }
+
+    private JPanel createBetPanelNorth() {
         JPanel betPanelNorth = new JPanel();
         betPanelNorth.setLayout(new BoxLayout(betPanelNorth, BoxLayout.Y_AXIS));
         JTextField textField = new JTextField(10);
         betPanelNorth.add(textField);
-        addButton(betPanelNorth, "Bet", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String bet = textField.getText();
-                betSize = Integer.parseInt(bet);
-            }
-        }, new Color(94, 140, 189));
-        addButton(betPanelNorth, "Hit", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isPressed = true;
-                decision = "H";
-            }
-        }, new Color(76, 175, 80));
-        addButton(betPanelNorth, "Stand", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isPressed = true;
-                decision = "S";
-            }
-        }, new Color(158, 8, 8));
-        balancePanel = new JPanel();
-        balancePanel.add(new JLabel("Balance"));
-        betPanel.add(betPanelNorth, BorderLayout.NORTH);
-        betPanel.add(balancePanel, BorderLayout.SOUTH);
-        add(betPanel, BorderLayout.SOUTH);
+        addButton(betPanelNorth, "Bet", e -> betSize = Integer.parseInt(textField.getText()), new Color(94, 140, 189));
+        addButton(betPanelNorth, "Hit", e -> updateDecision("H"), new Color(76, 175, 80));
+        addButton(betPanelNorth, "Stand", e -> updateDecision("S"), new Color(158, 8, 8));
+        return betPanelNorth;
     }
+
+    private void updateDecision(String decision) {
+        isPressed = true;
+        this.decision = decision;
+    }
+
+    private JPanel createBalancePanel() {
+        JPanel balancePanel = new JPanel();
+        balancePanel.add(new JLabel("Balance"));
+        return balancePanel;
+    }
+
+
 
     public void updateBalance(double b) {
         balancePanel = new JPanel();
@@ -231,7 +253,7 @@ public class PlayArea extends JPanel {
         optionsPanel.removeAll();
         JLabel label = new JLabel(text, JLabel.CENTER);
         label.setFont(new Font("SansSerif", Font.BOLD, 30));
-        optionsPanel.add(new JLabel(text, JLabel.CENTER), BorderLayout.CENTER);
+        optionsPanel.add(label, BorderLayout.CENTER);
     }
 
     public void displayString(String text) {
@@ -322,6 +344,14 @@ public class PlayArea extends JPanel {
 
     public void setSavePressed(boolean savePressed) {
         this.savePressed = savePressed;
+    }
+
+    public Boolean isLoadGame() {
+        return loadGame;
+    }
+
+    public void setLoadGame(Boolean loadGame) {
+        this.loadGame = loadGame;
     }
 }
 
