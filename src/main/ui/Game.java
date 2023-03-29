@@ -9,6 +9,8 @@ import org.json.JSONObject;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import java.util.Collections;
 import java.util.Scanner;
 
 // this class represents the UI and logic for blackjack game
-public class Game {
+public class Game extends JFrame {
     private Hand playerHand;
     private DealerHand dealerHand;
     private ArrayList<Card> deck;
@@ -25,11 +27,26 @@ public class Game {
     private final JsonReader jsonReader;
     private final JsonWriter jsonWriter;
     private static final String JSON_STORE = "./data/game.json";
+    private PlayArea panel;
 
     // EFFECTS: initializes player hand and dealer hand and creates deck
     public Game() {
+        super("BlackJack");
+        setVisible(true);
+        setLayout(new BorderLayout());
+        setMinimumSize(new Dimension(WIDTH, HEIGHT));
+        setSize(1200,600);
+        panel = new PlayArea();
+        add(panel, BorderLayout.NORTH);
+        panel.setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
+
+        revalidate();
+        setVisible(true);
+
+
     }
 
 
@@ -37,7 +54,6 @@ public class Game {
     // EFFECTS: main function that runs blackjack game and logic.
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public void main() {
-        startingMessage();
         String keepPlaying = "";
         if (round == null || playerHand.getHand().size() == 0) {
             round = new Round(askBet());
@@ -213,8 +229,12 @@ public class Game {
     // EFFECTS: Deals two cards to dealer and player
     public void setup() {
         for (int i = 0; i < 2; i++) {
-            playerHand.addCard(dealCard());
-            dealerHand.addCard(dealCard());
+            Card c1 = dealCard();
+            panel.addPlayerCard(c1);
+            playerHand.addCard(c1);
+            Card c2 = dealCard();
+            panel.addDealerCard(c2);
+            dealerHand.addCard(c2);
         }
         System.out.println(getPHand());
         System.out.println(getDHand());

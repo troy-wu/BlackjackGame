@@ -1,136 +1,15 @@
 {
-    "balance": 1000,
-    "round": 300,
+    "balance": 900,
+    "round": 100,
     "playerHand": {
         "aceCount": 0,
-        "hand": [
-            {
-                "val": "J",
-                "suit": "S",
-                "value": 10
-            },
-            {
-                "val": "3",
-                "suit": "H",
-                "value": 3
-            }
-        ]
+        "hand": []
     },
     "deck": [
         {
-            "val": "10",
-            "suit": "H",
-            "value": 10
-        },
-        {
-            "val": "Q",
-            "suit": "S",
-            "value": 10
-        },
-        {
-            "val": "2",
-            "suit": "S",
-            "value": 2
-        },
-        {
-            "val": "9",
-            "suit": "C",
-            "value": 9
-        },
-        {
-            "val": "7",
-            "suit": "H",
-            "value": 7
-        },
-        {
-            "val": "7",
-            "suit": "D",
-            "value": 7
-        },
-        {
-            "val": "2",
-            "suit": "C",
-            "value": 2
-        },
-        {
-            "val": "Q",
-            "suit": "H",
-            "value": 10
-        },
-        {
-            "val": "7",
-            "suit": "C",
-            "value": 7
-        },
-        {
             "val": "J",
-            "suit": "D",
-            "value": 10
-        },
-        {
-            "val": "10",
-            "suit": "D",
-            "value": 10
-        },
-        {
-            "val": "2",
-            "suit": "D",
-            "value": 2
-        },
-        {
-            "val": "K",
             "suit": "H",
             "value": 10
-        },
-        {
-            "val": "4",
-            "suit": "C",
-            "value": 4
-        },
-        {
-            "val": "5",
-            "suit": "D",
-            "value": 5
-        },
-        {
-            "val": "5",
-            "suit": "S",
-            "value": 5
-        },
-        {
-            "val": "10",
-            "suit": "C",
-            "value": 10
-        },
-        {
-            "val": "K",
-            "suit": "S",
-            "value": 10
-        },
-        {
-            "val": "2",
-            "suit": "H",
-            "value": 2
-        },
-        {
-            "val": "4",
-            "suit": "S",
-            "value": 4
-        },
-        {
-            "val": "K",
-            "suit": "D",
-            "value": 10
-        },
-        {
-            "val": "J",
-            "suit": "C",
-            "value": 10
-        },
-        {
-            "val": "7",
-            "suit": "S",
-            "value": 7
         },
         {
             "val": "A",
@@ -138,8 +17,23 @@
             "value": 11
         },
         {
-            "val": "J",
-            "suit": "H",
+            "val": "9",
+            "suit": "C",
+            "value": 9
+        },
+        {
+            "val": "8",
+            "suit": "S",
+            "value": 8
+        },
+        {
+            "val": "6",
+            "suit": "S",
+            "value": 6
+        },
+        {
+            "val": "10",
+            "suit": "D",
             "value": 10
         },
         {
@@ -149,22 +43,22 @@
         },
         {
             "val": "4",
-            "suit": "H",
+            "suit": "D",
             "value": 4
         },
         {
-            "val": "6",
-            "suit": "C",
-            "value": 6
-        },
-        {
-            "val": "K",
+            "val": "10",
             "suit": "C",
             "value": 10
         },
         {
+            "val": "2",
+            "suit": "S",
+            "value": 2
+        },
+        {
             "val": "9",
-            "suit": "D",
+            "suit": "S",
             "value": 9
         },
         {
@@ -173,34 +67,19 @@
             "value": 10
         },
         {
-            "val": "8",
-            "suit": "H",
-            "value": 8
-        },
-        {
-            "val": "9",
-            "suit": "S",
-            "value": 9
-        },
-        {
-            "val": "8",
-            "suit": "S",
-            "value": 8
-        },
-        {
-            "val": "A",
-            "suit": "S",
-            "value": 11
-        },
-        {
-            "val": "4",
-            "suit": "D",
-            "value": 4
+            "val": "5",
+            "suit": "C",
+            "value": 5
         },
         {
             "val": "6",
-            "suit": "S",
+            "suit": "D",
             "value": 6
+        },
+        {
+            "val": "Q",
+            "suit": "C",
+            "value": 10
         },
         {
             "val": "A",
@@ -209,33 +88,98 @@
         },
         {
             "val": "9",
-            "suit": "H",
+            "suit": "D",
             "value": 9
         },
         {
-            "val": "A",
+            "val": "7",
             "suit": "H",
-            "value": 11
-        },
-        {
-            "val": "Q",
-            "suit": "C",
-            "value": 10
-        },
-        {
-            "val": "Q",
-            "suit": "D",
-            "value": 10
-        },
-        {
-            "val": "6",
-            "suit": "D",
-            "value": 6
+            "value": 7
         },
         {
             "val": "5",
-            "suit": "H",
+            "suit": "S",
             "value": 5
+        },
+        {
+            "val": "K",
+            "suit": "H",
+            "value": 10
+        },
+        {
+            "val": "Q",
+            "suit": "H",
+            "value": 10
+        },
+        {
+            "val": "Q",
+            "suit": "D",
+            "value": 10
+        },
+        {
+            "val": "2",
+            "suit": "D",
+            "value": 2
+        },
+        {
+            "val": "8",
+            "suit": "C",
+            "value": 8
+        },
+        {
+            "val": "Q",
+            "suit": "S",
+            "value": 10
+        },
+        {
+            "val": "7",
+            "suit": "D",
+            "value": 7
+        },
+        {
+            "val": "7",
+            "suit": "C",
+            "value": 7
+        },
+        {
+            "val": "6",
+            "suit": "H",
+            "value": 6
+        },
+        {
+            "val": "3",
+            "suit": "H",
+            "value": 3
+        },
+        {
+            "val": "A",
+            "suit": "S",
+            "value": 11
+        },
+        {
+            "val": "K",
+            "suit": "D",
+            "value": 10
+        },
+        {
+            "val": "K",
+            "suit": "S",
+            "value": 10
+        },
+        {
+            "val": "J",
+            "suit": "S",
+            "value": 10
+        },
+        {
+            "val": "2",
+            "suit": "C",
+            "value": 2
+        },
+        {
+            "val": "2",
+            "suit": "H",
+            "value": 2
         },
         {
             "val": "3",
@@ -243,34 +187,68 @@
             "value": 3
         },
         {
-            "val": "6",
+            "val": "4",
+            "suit": "C",
+            "value": 4
+        },
+        {
+            "val": "4",
             "suit": "H",
+            "value": 4
+        },
+        {
+            "val": "J",
+            "suit": "C",
+            "value": 10
+        },
+        {
+            "val": "3",
+            "suit": "D",
+            "value": 3
+        },
+        {
+            "val": "4",
+            "suit": "S",
+            "value": 4
+        },
+        {
+            "val": "5",
+            "suit": "D",
+            "value": 5
+        },
+        {
+            "val": "6",
+            "suit": "C",
             "value": 6
         },
         {
             "val": "5",
-            "suit": "C",
+            "suit": "H",
             "value": 5
         },
         {
+            "val": "A",
+            "suit": "H",
+            "value": 11
+        },
+        {
             "val": "8",
-            "suit": "C",
+            "suit": "D",
             "value": 8
+        },
+        {
+            "val": "9",
+            "suit": "H",
+            "value": 9
+        },
+        {
+            "val": "7",
+            "suit": "S",
+            "value": 7
         }
     ],
     "dealerHand": {
         "aceCount": 0,
-        "hand": [
-            {
-                "val": "3",
-                "suit": "D",
-                "value": 3
-            },
-            {
-                "val": "8",
-                "suit": "D",
-                "value": 8
-            }
-        ]
+        "hand": []
     }
 }
