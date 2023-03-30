@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+// Using Java's JPanel, this class represents the full user interaction of the blackjack game
 public class PlayArea extends JPanel {
     private JLabel playerLabel;
     private JLabel dealerLabel;
@@ -29,6 +30,8 @@ public class PlayArea extends JPanel {
     private boolean savePressed = false;
     private Boolean loadGame = null;
 
+    // MODIFIES: this
+    // EFFECTS: sets up the GUI with a start screen and a playscreen
     public PlayArea() {
         // Set the layout manager to BorderLayout
         setLayout(new BorderLayout());
@@ -43,6 +46,8 @@ public class PlayArea extends JPanel {
         revalidate();
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates a start screen, with a functioning play and load game button.
     private void createStartScreen() {
         startScreenPanel = new JPanel(new BorderLayout());
         startScreenPanel.setBackground(new Color(38, 209, 49));
@@ -56,6 +61,7 @@ public class PlayArea extends JPanel {
         add(startScreenPanel, BorderLayout.CENTER);
     }
 
+    // EFFECTS: returns a button with given label and boolean value that it sets LoadGame to.
     private JButton createButton(String label, boolean b) {
         JButton button = new JButton(label);
         button.setFont(new Font("SansSerif", Font.BOLD, 30));
@@ -70,6 +76,8 @@ public class PlayArea extends JPanel {
         return button;
     }
 
+    // MODIFIES: this
+    // EFFECTS: Set's up the initial state of the GUI.
     private void startGame() {
         // Remove the start screen panel
         remove(startScreenPanel);
@@ -86,6 +94,8 @@ public class PlayArea extends JPanel {
         revalidate();
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds both the dealerPanel and playerPanel to the parent Jpanel
     private void addCardPanels() {
         dealerPanel = new JPanel(new BorderLayout());
         JLabel dealerLabel = new JLabel("Dealer", JLabel.CENTER);
@@ -108,6 +118,8 @@ public class PlayArea extends JPanel {
 
     }
 
+    // MODIFIES: this
+    // EFFECTS: takes in a card and displays it onto the dealers JPanel
     public void addDealerCard(Card c) {
         JLabel label;
         if (c.getVal().equals("blank")) {
@@ -119,8 +131,7 @@ public class PlayArea extends JPanel {
         revalidate();
     }
 
-
-
+    // EFFECTS: returns the formatted Player Panel
     private JPanel addPlayerCardsPanel() {
         playerPanel = new JPanel(new BorderLayout());
         playerLabel = new JLabel("Player", JLabel.CENTER);
@@ -139,6 +150,8 @@ public class PlayArea extends JPanel {
         return resultPanel;
     }
 
+    // MODIFIES: this
+    // EFFECTS: Adds a label, with a corresponding hand value to display for the player
     public void addPlayerLabel(int number) {
         playerPanel.removeAll();
         playerLabel = new JLabel("Player: " + number, JLabel.CENTER);
@@ -147,6 +160,8 @@ public class PlayArea extends JPanel {
         revalidate();
     }
 
+    // MODIFIES: this
+    // EFFECTS: Adds a label, with a corresponding hand value to display for the dealer
     public void addDealerLabel(int number) {
         dealerPanel.removeAll();
         dealerLabel = new JLabel("Dealer: " + number, JLabel.CENTER);
@@ -155,6 +170,8 @@ public class PlayArea extends JPanel {
         revalidate();
     }
 
+    // MODIFIES: this
+    // EFFECTS: Adds the given card to the player panel
     public void addPlayerCard(Card c) {
         JLabel label = new JLabel(new ImageIcon(PlayArea.getImage(c)));
         label.setMaximumSize(new Dimension(100,150));
@@ -162,6 +179,7 @@ public class PlayArea extends JPanel {
         revalidate();
     }
 
+    // EFFECTS: returns a resized, formatted image given an image URL;
     public BufferedImage resize(String url) {
         BufferedImage org = null;
         try {
@@ -176,10 +194,8 @@ public class PlayArea extends JPanel {
         return res;
     }
 
-    public JPanel getBetPanel() {
-        return betPanel;
-    }
-
+    // MODIFIES: this
+    // EFFECTS: Adds the interaction for the chip betting panel
     private void addBetChipsPanel() {
         betPanel = new JPanel(new BorderLayout());
         betPanel.setBackground(Color.GRAY);
@@ -189,6 +205,7 @@ public class PlayArea extends JPanel {
         add(betPanel, BorderLayout.SOUTH);
     }
 
+    // EFFECTS: returns the Save button which sets savePressed to true if pressed;
     private JButton createSaveButton() {
         JButton save = new JButton("SAVE");
         save.addActionListener(new ActionListener() {
@@ -202,6 +219,7 @@ public class PlayArea extends JPanel {
         return save;
     }
 
+    // EFFECTS: returns the north panel of the betpanel.
     private JPanel createBetPanelNorth() {
         JPanel betPanelNorth = new JPanel();
         betPanelNorth.setLayout(new BoxLayout(betPanelNorth, BoxLayout.Y_AXIS));
@@ -213,19 +231,23 @@ public class PlayArea extends JPanel {
         return betPanelNorth;
     }
 
+    // REQUIRES: decision must be either "H" or "S".
+    // MODIFIES: this
+    // EFFECTS: updates the decision with given string.
     private void updateDecision(String decision) {
         isPressed = true;
         this.decision = decision;
     }
 
+    // EFFECTS: returns the panel representing the panel
     private JPanel createBalancePanel() {
         JPanel balancePanel = new JPanel();
         balancePanel.add(new JLabel("Balance"));
         return balancePanel;
     }
 
-
-
+    // MODIFIES: this
+    // EFFECTS: displays a label corresponding to the balance of the user.
     public void updateBalance(double b) {
         balancePanel = new JPanel();
         balancePanel.add(new JLabel("Balance: " + b));
@@ -234,6 +256,8 @@ public class PlayArea extends JPanel {
     }
 
 
+    // MODIFIES: panel
+    // EFFECTS: Adds a button with given text, color and listener to the given panel.
     private void addButton(JPanel panel, String text, ActionListener listener, Color color) {
         JButton button = new JButton(text);
         button.addActionListener(listener);
@@ -242,6 +266,8 @@ public class PlayArea extends JPanel {
         panel.add(button);
     }
 
+    // MODIFIES: this
+    // EFFECTS: Adds options panel at top of the screen.
     private void addGameOptionsPanel() {
         optionsPanel = new JPanel(new BorderLayout());
         optionsPanel.setBackground(Color.LIGHT_GRAY);
@@ -249,6 +275,8 @@ public class PlayArea extends JPanel {
         add(optionsPanel, BorderLayout.NORTH);
     }
 
+    // MODIFIES: this
+    // EFFECTS: Adds a text containing the status of the game at the top of the screen.
     public void addText(String text) {
         optionsPanel.removeAll();
         JLabel label = new JLabel(text, JLabel.CENTER);
@@ -256,21 +284,8 @@ public class PlayArea extends JPanel {
         optionsPanel.add(label, BorderLayout.CENTER);
     }
 
-    public void displayString(String text) {
-        // Create a new JLabel with the specified text
-        JLabel label = new JLabel(text);
-
-        // Set the preferred size of the label
-        label.setPreferredSize(new Dimension(200, 50));
-
-        // Add the label to the PlayArea panel
-        add(label);
-
-        // Call revalidate and repaint on the panel to update the layout
-        revalidate();
-        repaint();
-    }
-
+    // REQUIRES: Card must be a valid card, (one in a 52 card deck)
+    // EFFECTS: takes a given card and returns a resized image of it
     public static BufferedImage getImage(Card card) {
         String formatted = "";
         String suit = card.getSuit();
@@ -296,12 +311,30 @@ public class PlayArea extends JPanel {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: displays the dealer hand in the UI.
     public void revealDealer(ArrayList<Card> cards) {
         dealerBottomPanel.removeAll();
         for (Card c : cards) {
             addDealerCard(c);
         }
 
+    }
+
+    // MODIFIES: this
+    // EFFECTS: clears both player and dealers label and cards.
+    public void clearHands() {
+        playerPanel.removeAll();
+        playerLabel = new JLabel("Player", JLabel.CENTER);
+        playerLabel.setPreferredSize(new Dimension(30, 50));
+        playerPanel.add(playerLabel, BorderLayout.CENTER);
+        dealerPanel.removeAll();
+        dealerLabel = new JLabel("Dealer", JLabel.CENTER);
+        dealerLabel.setPreferredSize(new Dimension(30, 50));
+        dealerPanel.add(dealerLabel, BorderLayout.CENTER);
+        playerBottomPanel.removeAll();
+        dealerBottomPanel.removeAll();
+        revalidate();
     }
 
     public boolean isPressed() {
@@ -322,20 +355,6 @@ public class PlayArea extends JPanel {
 
     public void setBetSize(double i) {
         betSize = i;
-    }
-
-    public void clearHands() {
-        playerPanel.removeAll();
-        playerLabel = new JLabel("Player", JLabel.CENTER);
-        playerLabel.setPreferredSize(new Dimension(30, 50));
-        playerPanel.add(playerLabel, BorderLayout.CENTER);
-        dealerPanel.removeAll();
-        dealerLabel = new JLabel("Dealer", JLabel.CENTER);
-        dealerLabel.setPreferredSize(new Dimension(30, 50));
-        dealerPanel.add(dealerLabel, BorderLayout.CENTER);
-        playerBottomPanel.removeAll();
-        dealerBottomPanel.removeAll();
-        revalidate();
     }
 
     public boolean isSavePressed() {

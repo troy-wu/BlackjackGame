@@ -27,7 +27,7 @@ public class Game extends JFrame {
     private final JsonReader jsonReader;
     private final JsonWriter jsonWriter;
     private static final String JSON_STORE = "./data/game.json";
-    private PlayArea panel;
+    private final PlayArea panel;
 
     // EFFECTS: initializes player hand and dealer hand and creates deck
     public Game() {
@@ -57,7 +57,7 @@ public class Game extends JFrame {
     }
 
 
-    // MODIFIES; this
+    // MODIFIES; this, panel
     // EFFECTS: main function that runs blackjack game and logic.
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public void main() {
@@ -116,6 +116,7 @@ public class Game extends JFrame {
         }
     }
 
+    // EFFECTS: will stop program until the user either clicks Play or Load Game.
     private boolean waitForLoad() {
         while (panel.isLoadGame() == null) {
             try {
@@ -127,6 +128,7 @@ public class Game extends JFrame {
         return false;
     }
 
+    // EFFECTS: will stop program until input is pressed, returns true if exception thrown.
     private boolean waitForInput() {
         while (true) {
             if (panel.isPressed()) {
@@ -141,36 +143,34 @@ public class Game extends JFrame {
         }
     }
 
-    // MODIFIES: this
-    // EFFECTS: prints dialogue when dealer busts and adds win to balance.
+    // MODIFIES: this, panel
+    // EFFECTS: displays dialogue when dealer busts and adds win to balance.
     public void dealerBust() {
-        System.out.println("Dealer Bust!");
         double win = round.getWinReg();
-        System.out.println("You win: " + win);
         panel.addText("You Won! Dealer Bust! You win: " + win);
         balance += win;
         printBal();
         panel.updateBalance(balance);
     }
 
-    // MODIFIES: this
-    // EFFECTS: prints dialogue when player busts and deducts bet from balance.
+    // MODIFIES: this, panel
+    // EFFECTS: displays dialogue when player busts and deducts bet from balance.
     public void playerBust() {
         panel.addText("You Lost! BUSTED!");
         balance -= round.getBetSize();
         panel.updateBalance(balance);
     }
 
-    // MODIFIES: this
-    // EFFECTS: prints dialogue when dealer wins and deducts bet from balance.
+    // MODIFIES: this, panel
+    // EFFECTS: displays dialogue when dealer wins and deducts bet from balance.
     public void dealerWin() {
         panel.addText("You Lost! Dealer had a higher hand.");
         balance -= round.getBetSize();
         panel.updateBalance(balance);
     }
 
-    // MODIFIES: this
-    // EFFECTS: prints dialogue when player wins and adds win from balance.
+    // MODIFIES: this, panel
+    // EFFECTS: displays dialogue when player wins and adds win from balance.
     public void playerWin() {
         double win = round.getWinReg();
         panel.addText("You Won! You had a higher hand. You win: " + win);
@@ -178,7 +178,7 @@ public class Game extends JFrame {
         panel.updateBalance(balance);
     }
 
-    // MODIFIES: this
+    // MODIFIES: this, panel
     // EFFECTS: clears hands and returns the user input whether or not the user wants to keep playing.
     public String roundEnd() {
         panel.updateBalance(balance);
@@ -199,6 +199,7 @@ public class Game extends JFrame {
         }
     }
 
+    // EFFECTS: General stall method that stalls the program for 100ms.
     private void stall() {
         try {
             Thread.sleep(100);
@@ -207,6 +208,7 @@ public class Game extends JFrame {
         }
     }
 
+    //  EFFECTS: Saves state of game to JSON file.
     private void saveGame() {
         try {
             jsonWriter.open();
@@ -223,28 +225,8 @@ public class Game extends JFrame {
         }
     }
 
-    // MODIFIES: this
-    // EFFECTS: Prompts user to select if they would like to load file.
-    //          if not, load a fresh game
-    private void selectionMenu() {
-        Scanner user = new Scanner(System.in);
-        System.out.print("Would you like to load previous game? (y/n): ");
-        String u = user.nextLine();
-        if (u.equals("y")) {
-            loadGame();
-        } else {
-            playerHand = new Hand(new ArrayList<>());
-            dealerHand = new DealerHand(new ArrayList<>());
-            deck = makeDeck();
-            deck.addAll(makeDeck());
-            deck.addAll(makeDeck());
-
-            balance = 1000;
-        }
-
-
-    }
-
+    // MODIFIES: this, panel
+    // EFFECTS: loads game from JSON file
     private void loadGame() {
         try {
             balance = jsonReader.read();
@@ -268,15 +250,7 @@ public class Game extends JFrame {
         return deck.remove(0);
     }
 
-    public String getPHand() {
-        return "Player: " + playerHand;
-    }
-
-    public String getDHand() {
-        return "Dealer: " + dealerHand;
-    }
-
-    // MODIFIES: this
+    // MODIFIES: this, panel
     // EFFECTS: Deals two cards to dealer and player
     public void setup() {
         for (int i = 0; i < 2; i++) {
@@ -305,7 +279,7 @@ public class Game extends JFrame {
             if (panel.getBetSize() != 0) {
                 panel.setPressed(false);
                 if (panel.getBetSize() > balance) {
-                    panel.displayString("You're too broke for that bucko.");
+                    panel.addText("Too broke bucko.");
                 } else {
                     break;
                 }
@@ -329,31 +303,25 @@ public class Game extends JFrame {
         if (d.equals("H")) {
             Card c = dealCard();
             panel.addPlayerCard(c);
-            System.out.println("Hit. You got " + c);
             playerHand.addCard(c);
             panel.addPlayerLabel(playerHand.countHand());
-            System.out.println("Player: " + playerHand);
-        } else if (d.equals("S")) {
-            System.out.println("Stand.");
         }
     }
 
     // MODIFIES: this, dealerHand
     // EFFECTS: dealer draws until hand is equal to or over 17 and returns hand value.
     public int dealerPlay() {
-        System.out.println("Dealer Shows: " + dealerHand.showHand());
         while (dealerHand.countHand() < 17) {
             Card c = dealCard();
             panel.addDealerCard(c);
             dealerHand.addCard(c);
             panel.addDealerLabel(dealerHand.countHand());
-            System.out.println("Dealer Draws: " + dealerHand.showHand());
         }
         return dealerHand.countHand();
     }
 
-    // MODIFIES: this
-    // EFFECTS: starts a new game by clear
+    // MODIFIES: this, panel
+    // EFFECTS: starts a new game by clearing hands
     public void clearHands() {
         panel.clearHands();
         playerHand.clearHand();
@@ -373,6 +341,7 @@ public class Game extends JFrame {
         return res;
     }
 
+    // EFFECTS: converts object to a JSON formatted Object
     public JSONObject toJson() {
         JSONObject main = new JSONObject();
         main.put("playerHand", playerHand.toJson());
