@@ -3,6 +3,8 @@ package ui;
 import exceptions.InputException;
 import model.Card;
 import model.DealerHand;
+import model.Event;
+import model.EventLog;
 import model.Hand;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,10 +13,13 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Scanner;
 
 // this class represents the UI and logic for blackjack game
@@ -42,6 +47,8 @@ public class Game extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
+        WindowListener listener = new WindowListener();
+        addWindowListener(listener);
         balance = 1000;
         deck = makeDeck();
         for (int i = 0; i < 5; i++) {
@@ -52,8 +59,6 @@ public class Game extends JFrame {
         dealerHand = new DealerHand(new ArrayList<>());
         revalidate();
         setVisible(true);
-
-
     }
 
 
@@ -219,6 +224,7 @@ public class Game extends JFrame {
             } catch (Exception e) {
                 return;
             }
+            printEventLog();
             System.exit(0);
         } catch (FileNotFoundException e) {
             System.out.println("Unable to write to file: " + JSON_STORE);
@@ -350,6 +356,21 @@ public class Game extends JFrame {
         main.put("balance", balance);
         main.put("round", round.getBetSize());
         return main;
+    }
+
+    public void printEventLog() {
+        Iterator<Event> log = EventLog.getInstance().iterator();
+        for (Iterator<Event> it = log; it.hasNext(); ) {
+            Event e = it.next();
+            System.out.println(e.getDescription());
+        }
+    }
+
+    public class WindowListener extends WindowAdapter {
+        @Override
+        public void windowClosing(WindowEvent e) {
+            printEventLog();
+        }
     }
 
     public Hand getPlayerHand() {

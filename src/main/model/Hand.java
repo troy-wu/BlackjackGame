@@ -20,6 +20,7 @@ public class Hand {
         for (Card c : hand) {
             if (c.getVal().equals("A")) {
                 aceCount += 1;
+                EventLog.getInstance().logEvent(new Event("Ace detected, updated aceCount to " + aceCount));
             }
         }
     }
@@ -29,6 +30,7 @@ public class Hand {
     public void clearHand() {
         hand = new ArrayList<>();
         aceCount = 0;
+        EventLog.getInstance().logEvent(new Event("Hand Cleared"));
     }
 
     public ArrayList<Card> getHand() {
@@ -52,6 +54,7 @@ public class Hand {
             res -= 10;
             temp--;
         }
+        EventLog.getInstance().logEvent(new Event("Hand Counted: " + res));
         return res;
     }
 
@@ -66,7 +69,9 @@ public class Hand {
         hand.add(c);
         if ((c.getVal()).equals("A")) {
             aceCount++;
+            EventLog.getInstance().logEvent(new Event("Ace detected, updated aceCount to " + aceCount));
         }
+        EventLog.getInstance().logEvent(new Event("Card added to hand: " + c));
     }
 
     // EFFECTS: Constructs a hand in JSON format
