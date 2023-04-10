@@ -61,6 +61,15 @@ I also enjoy playing blackjack from time to time and believe that this project i
 4. You can Hit, which adds the Card to your hand, or Stand.
 5. Once the round is over, you can press the save button which saves the balance stored
 
+#### Phase 4: Task 3
+Looking back at the design structure of this project, there are flaws that I would change given the time.
+
+Firstly, the Game class has very low cohesion. It not only contains all the game logic of blackjack, 
+but it also contains the user interface and interaction. What I would do is separate those two into two separate classes.
+I would put the logic class in the model package and the interface class in the UI package.
+Another change I would do is simply refactor the Round Class into the model package as it is much more fitting as the model
+rather than the UI Package. I could also potentially split the PlayArea class into multiple JPanel classes to add more modularity and
+increase cohesion in my program.
 #### Citations
 
 persistence package, including JSONWriter and JSONReader is based on code from https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo.git
