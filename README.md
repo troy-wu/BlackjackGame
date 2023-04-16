@@ -21,7 +21,6 @@ then they stand.
 - 2 to 10: their respective value
 - Jack, Queen and King: 10
 - Ace: 1 OR 11
-
 Some potential features that I might add are:
 - An option to double down a bet or split cards.
 - A graph representing your performance in the current session using your balance as data points after every game.
